@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1beta1 # for versions before 1.14 use extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-nginx-kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  backend:
+    serviceName: kubernetes-dashboard
+    servicePort: 80
+  tls:
+  - hosts:
+    - ele-cloud.com
+    - "*.ele-cloud.com"
+    secretName: kubernetes-dashboard-certs
+  rules:
+  - host: k8s-local.ele-cloud.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 443
+      - path: /dashboard
+        backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 80
